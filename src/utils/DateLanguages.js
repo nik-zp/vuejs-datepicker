@@ -130,6 +130,14 @@ export default {
       },
       'days': ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש']
     },
+    'hi': {
+      'language': 'Hindi',
+      'months': {
+        'original': ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        'abbr': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+      },
+      'days': ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    },
     'hu': {
       'language': 'Hungarian',
       'months': {
