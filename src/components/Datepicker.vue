@@ -39,8 +39,7 @@
                       @click="isRtl ? nextMonth() : previousMonth()"
                       class="prev"
                       v-bind:class="{ 'disabled' : isRtl ? nextMonthDisabled(pageTimestamp) : previousMonthDisabled(pageTimestamp) }">&lt;</span>
-                  <span @click="showMonthCalendar" :class="allowedToShowView('month') ? 'up' : ''">{{ currMonthName }} {{ currYear }}
-                  </span>
+                  <span @click="showMonthCalendar" :class="allowedToShowView('month') ? 'up' : ''">{{ isYmd ? currYear : currMonthName }} {{ isYmd ? currMonthName : currYear }}</span>
                   <span
                       @click="isRtl ? previousMonth() : nextMonth()"
                       class="next"
@@ -318,16 +317,19 @@ export default {
     },
     isRtl () {
       return this.translation.rtl === true
+    },
+    isYmd () {
+      return this.translation.ymd === true
     }
   },
   methods: {
     /**
      * Close all calendar layers
      */
-    close () {
+    close (full) {
       this.showDayView = this.showMonthView = this.showYearView = false
       if (!this.isInline) {
-        this.$emit('closed')
+        if (full) this.$emit('closed')
         document.removeEventListener('click', this.clickOutside, false)
       }
     },
@@ -347,7 +349,7 @@ export default {
         return false
       }
       if (this.isOpen) {
-        return this.close()
+        return this.close(true)
       }
       this.setInitialView()
       if (!this.isInline) {
@@ -386,26 +388,27 @@ export default {
 
       this.close()
       this.showDayView = true
-      if (!this.isInline) {
-        document.addEventListener('click', this.clickOutside, false)
-      }
+      this.addOutsideClickListener()
     },
     showMonthCalendar () {
       if (!this.allowedToShowView('month')) return false
 
       this.close()
       this.showMonthView = true
-      if (!this.isInline) {
-        document.addEventListener('click', this.clickOutside, false)
-      }
+      this.addOutsideClickListener()
     },
     showYearCalendar () {
       if (!this.allowedToShowView('year')) return false
 
       this.close()
       this.showYearView = true
+      this.addOutsideClickListener()
+    },
+    addOutsideClickListener () {
       if (!this.isInline) {
-        document.addEventListener('click', this.clickOutside, false)
+        setTimeout(() => {
+          document.addEventListener('click', this.clickOutside, false)
+        }, 100)
       }
     },
     setDate (timestamp) {
@@ -433,7 +436,7 @@ export default {
       if (this.isInline) {
         this.showDayCalendar()
       } else {
-        this.close()
+        this.close(true)
       }
     },
     /**
@@ -451,7 +454,7 @@ export default {
         this.showDayCalendar()
       } else {
         this.setDate(date)
-        this.close()
+        this.close(true)
       }
     },
     /**
@@ -469,7 +472,7 @@ export default {
         this.showMonthCalendar()
       } else {
         this.setDate(date)
-        this.close()
+        this.close(true)
       }
     },
     /**
@@ -821,7 +824,7 @@ export default {
           return this.showDayCalendar()
         }
         this.resetDefaultDate()
-        this.close()
+        this.close(true)
         document.removeEventListener('click', this.clickOutside, false)
       }
     },
